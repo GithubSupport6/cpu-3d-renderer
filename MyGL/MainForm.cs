@@ -30,7 +30,7 @@ namespace MyGL
         float dz = 0.001f;
         Object3D obj;
         Random random = new Random();
-        int c = 5;
+        float c = 5;
 
         public MainForm()
         {
@@ -47,7 +47,7 @@ namespace MyGL
         private void MainPanel_MouseWheel(object sender, MouseEventArgs e)
         {
             //z += e.Delta * dz;
-            c += e.Delta;
+            c += (float)e.Delta / 100;
             if (c < 1)
             {
                 c = 1;

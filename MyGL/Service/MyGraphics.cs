@@ -37,7 +37,7 @@ namespace MyGL.Service
 
             for (int x = xstart; x < xfinish; x++)
             {
-                if (y < 0 || x < 0 || x > graphicsProvider.Width)
+                if (y < 0 || x < 0 || x >= graphicsProvider.Width || y >= graphicsProvider.Height)
                 {
                     continue;
                 }
@@ -244,7 +244,7 @@ namespace MyGL.Service
             
         }
 
-        public void DrawObject(Object3D obj, Color color, Vec3f lightDirection, int c = 5)
+        public void DrawObject(Object3D obj, Color color, Vec3f lightDirection, float c = 5)
         {
             var Width = graphicsProvider.Width;
             var Height = graphicsProvider.Height;
