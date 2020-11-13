@@ -1,6 +1,7 @@
 ﻿using MyGL.Service.Math3D;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,10 +12,13 @@ namespace MyGL.Service.Files
     class WaveObjParser : IParser
     {
 
+
+        
+
         public Object3D Parse(string path)
         {
             List<Vec3f> vertexes = new List<Vec3f>();
-            List<Vec3i> faces = new List<Vec3i>();
+            List<Face> faces = new List<Face>();
 
             using (FileStream stream = new FileStream(path, FileMode.Open))
             {
@@ -38,7 +42,26 @@ namespace MyGL.Service.Files
                         else if (data.StartsWith("f "))
                         {
                             var face = data.Split(" /".ToArray()).Skip(1).Select(e => int.Parse(e));
-                            faces.Add(new Vec3i(face.ElementAt(0), face.ElementAt(3), face.ElementAt(6)));
+                            int countOfSlash = face.Count() / 3;
+
+                            List<Vertex> vertices = new List<Vertex>();
+                            for (int i = 0; i < 3; i++)
+                            {
+                                Vertex vertex = new Vertex();
+                                vertex.v = face.ElementAt(i * countOfSlash);
+                                if (countOfSlash > 1)
+                                {
+                                    vertex.vt = face.ElementAt(i * countOfSlash + 1);
+                                }
+                                if (countOfSlash > 2)
+                                {
+                                    vertex.vn = face.ElementAt(i * countOfSlash + 2);
+                                }
+                                vertices.Add(vertex);
+                            }
+
+
+                            faces.Add(new Face(vertices.ElementAt(0), vertices.ElementAt(1), vertices.ElementAt(2)));
                         }
                     }
                 }

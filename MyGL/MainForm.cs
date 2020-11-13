@@ -47,7 +47,7 @@ namespace MyGL
         private void MainPanel_MouseWheel(object sender, MouseEventArgs e)
         {
             //z += e.Delta * dz;
-            c += (float)e.Delta / 100;
+            c += (float)e.Delta / 30;
             if (c < 1)
             {
                 c = 1;
@@ -111,6 +111,18 @@ namespace MyGL
         private void Menu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
+        }
+
+        private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == '+')
+            {
+                z += 0.1f;
+            }
+            else
+            {
+                z -= 0.1f;
+            }
         }
     }
 }

@@ -263,9 +263,9 @@ namespace MyGL.Service
             foreach (var face in obj.Faces)
             {
                 //Работает медленно
-                vertexesFromMem[0] = (obj.Vertexes.ElementAt(face.X - 1));
-                vertexesFromMem[1] = (obj.Vertexes.ElementAt(face.Y - 1));
-                vertexesFromMem[2] = (obj.Vertexes.ElementAt(face.Z - 1));
+                vertexesFromMem[0] = (obj.Vertexes.ElementAt(face.v1.v - 1));
+                vertexesFromMem[1] = (obj.Vertexes.ElementAt(face.v2.v - 1));
+                vertexesFromMem[2] = (obj.Vertexes.ElementAt(face.v3.v - 1));
                 for (int i = 0;i<vertexes.Length; i++)
                 {
                     Vec3f v = vertexesFromMem[i];
@@ -274,6 +274,7 @@ namespace MyGL.Service
                 }
 
                 //color = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
+
                 Vec3f normal = Vec3f.VecMul(vertexesFromMem[2] - vertexesFromMem[0], vertexesFromMem[1] - vertexesFromMem[0]);
                 normal.Normalize();
                 float intensity = normal * lightDirection;
@@ -284,7 +285,7 @@ namespace MyGL.Service
                 }
                 if (intensity > 0)
                     DrawTriangle(vertexes[0], vertexes[1], vertexes[2], Color.FromArgb(
-                        (int) (color.R * intensity),
+                        (int)(color.R * intensity),
                         (int)(color.G * intensity),
                         (int)(color.B * intensity)
                     ));
@@ -303,9 +304,9 @@ namespace MyGL.Service
             {
 
                 //Работает медленно
-                vertexes[0] = (obj.Vertexes.ElementAt(face.X - 1));
-                vertexes[1] = (obj.Vertexes.ElementAt(face.Y - 1));
-                vertexes[2] = (obj.Vertexes.ElementAt(face.Z - 1));
+                vertexes[0] = (obj.Vertexes.ElementAt(face.v1.v - 1));
+                vertexes[1] = (obj.Vertexes.ElementAt(face.v2.v - 1));
+                vertexes[2] = (obj.Vertexes.ElementAt(face.v3.v - 1));
 
 
                 for (int vertexIndex = 0; vertexIndex < 3; vertexIndex++)
