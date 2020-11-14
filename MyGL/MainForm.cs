@@ -42,6 +42,7 @@ namespace MyGL
                 new object[] { true }
             );
             MainPanel.MouseWheel += MainPanel_MouseWheel;
+            KeyPreview = true;
         }
 
         private void MainPanel_MouseWheel(object sender, MouseEventArgs e)
@@ -79,6 +80,8 @@ namespace MyGL
                 (y - (float)e.ClipRectangle.Height / 2) / (Height / 2),
                 z);
 
+            ligth = zero - ligth;
+
             ligth.Normalize();
 
             //graphics.DrawLine(new Vec2i(200, 200), new Vec2i(x, y), Color.White);
@@ -113,16 +116,19 @@ namespace MyGL
 
         }
 
-        private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
+
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyChar == '+')
+            if (e.KeyCode == Keys.W)
             {
-                z += 0.1f;
+                z += 1f;
             }
-            else
+            else if (e.KeyCode == Keys.S)
             {
-                z -= 0.1f;
+                z -= 1f;
             }
+            MainPanel.Refresh();
+            Console.WriteLine(z);
         }
     }
 }
