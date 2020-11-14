@@ -14,6 +14,12 @@ namespace MyGL.Service
         {
             get;
         }
+
+        public Vec3f[] VertexesTexture
+        {
+            get;
+        }
+
         public Face[] Faces
         {
             get;
@@ -31,11 +37,12 @@ namespace MyGL.Service
         }
 
 
-        public Object3D(Vec3f[] vertexes, Face[] faces, Texture texture = null)
+        public Object3D(Vec3f[] vertexes, Face[] faces, Vec3f[] vertexesTexture, Texture texture = null)
         {
             this.Vertexes = vertexes;
             this.Faces = faces;
             this.Texture = texture;
+            this.VertexesTexture = vertexesTexture;
         }
 
         public static Vec3i Triangulate(List<int> face)

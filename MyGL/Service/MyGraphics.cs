@@ -69,7 +69,6 @@ namespace MyGL.Service
             this.graphicsProvider = provider;
         }
 
-
         public void DrawLine(Vec2i v1,  Vec2i v2, Color color)
         {
             // Работет медленно, нужен целочисленный вариант
@@ -244,6 +243,7 @@ namespace MyGL.Service
             
         }
 
+
         public void DrawObject(Object3D obj, Color color, Vec3f lightDirection, float c = 5)
         {
             var Width = graphicsProvider.Width;
@@ -290,39 +290,6 @@ namespace MyGL.Service
                         (int)(color.B * intensity)
                     ));
 
-            }
-        }
-
-        public void DrawObject(Object3D obj, Color color, int c = 5)
-        {
-            var Width = graphicsProvider.Width;
-            var Height = graphicsProvider.Height;
-            var vertexes = new Vec3f[3];
-
-
-            foreach (var face in obj.Faces)
-            {
-
-                //Работает медленно
-                vertexes[0] = (obj.Vertexes.ElementAt(face.v1.v - 1));
-                vertexes[1] = (obj.Vertexes.ElementAt(face.v2.v - 1));
-                vertexes[2] = (obj.Vertexes.ElementAt(face.v3.v - 1));
-
-
-                for (int vertexIndex = 0; vertexIndex < 3; vertexIndex++)
-                {
-                    Vec2i v1 = new Vec2i(
-                        (int)((vertexes.ElementAt(vertexIndex).X + 1) * c + Width / 2),
-                        (int)((vertexes.ElementAt(vertexIndex).Y + 1) * c + Height / 2)
-                        );
-
-                    Vec2i v2 = new Vec2i(
-                        (int)((vertexes.ElementAt((vertexIndex + 1) % 2).X + 1) * c + Width / 2),
-                        (int)((vertexes.ElementAt((vertexIndex + 1) % 2).Y + 1) * c + Height / 2)
-                        );
-
-                    DrawLine(v1,v2,color);
-                }
             }
         }
 
