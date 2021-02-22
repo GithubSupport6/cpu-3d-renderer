@@ -13,9 +13,16 @@ namespace MyGL.Service.Math3D
             return new Vec3f(elements.ElementAt(0), elements.ElementAt(1), elements.ElementAt(2));
         }
 
-        public static int InterpolateLinearByX(Vec3i v1, Vec3i v2, int y)
+        public static int InterpolateLinear(int x1, int y1, int x2, int y2, int x)
         {
-            return (int)((float)v1.X + ((float)(v2.X - v1.X) / (float)(v2.Y - v1.Y)) * (float)(y - v1.Y));
+            return (int)((float)y1 + ((float)(y2 - y1) / (float)(x2 - x1)) * (float)(x - x1));
+        }
+
+        public static Vec3i InterpolateLinearForXZ(Vec3i v1, Vec3i v2, int y)
+        {
+            int x = InterpolateLinear(v1.Y, v1.X, v2.Y, v2.X, y);
+            int z = InterpolateLinear(v1.Y, v1.Z, v2.Y, v2.Z, y);
+            return new Vec3i(x, y, z);
         }
     }
 }

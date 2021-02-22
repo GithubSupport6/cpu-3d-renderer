@@ -170,9 +170,9 @@ namespace MyGL.Service
 
         public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i v3, Face face, Vec3f[] vt, Textures.Texture texture, float intensity)
         {
-            Vec3f vt1 = vt[face.v1.vt] * texture.data.;
-            Vec3f vt2 = vt[face.v2.vt];
-            Vec3f vt3 = vt[face.v3.vt];
+            Vec3f vt1 = vt[face.v1.vt-1];
+            Vec3f vt2 = vt[face.v2.vt-1];
+            Vec3f vt3 = vt[face.v3.vt-1];
 
             if (v1.Y > v2.Y)
             {
@@ -189,21 +189,21 @@ namespace MyGL.Service
                 Swap(ref v2, ref v3);
                 Swap(ref vt2, ref vt3);
             }
-            int xleft = 0;
-            int xright = 0;
+            Vec3i xleft;
+            Vec3i xright;
             
 
             for (int i = v1.Y; i < v2.Y; i++)
             {
-                xleft = Helper3D.InterpolateLinearByX(v1, v2, i);
-                xright = Helper3D.InterpolateLinearByX(v1, v3, i);
-                DrawStraightLine(xleft, xright, i, 0, zbuffer, Color.FromArgb((int)(intensity * 255), Color.White));
+                xleft = Helper3D.InterpolateLinearForXZ(v1, v2, i);
+                xright = Helper3D.InterpolateLinearForXZ(v1, v3, i);
+                DrawStraightLine(xleft.X, xright.X, i, xright.Z, zbuffer, Color.FromArgb((int)(intensity * 255), Color.White));
             }
             for (int i = v2.Y; i < v3.Y; i++)
             {
-                xleft = Helper3D.InterpolateLinearByX(v2, v3, i);
-                xright = Helper3D.InterpolateLinearByX(v1, v3, i);
-                DrawStraightLine(xleft, xright, i, 0, zbuffer, Color.FromArgb((int)(intensity*255),Color.White));
+                xleft = Helper3D.InterpolateLinearForXZ(v2, v3, i);
+                xright = Helper3D.InterpolateLinearForXZ(v1, v3, i);
+                DrawStraightLine(xleft.X, xright.X, i, xright.Z, zbuffer, Color.FromArgb((int)(intensity*255),Color.White));
             }
         }
 
