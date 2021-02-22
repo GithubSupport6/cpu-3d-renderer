@@ -33,8 +33,6 @@ namespace MyGL.Service
             int xstart = Math.Min(x1, x2);
             int xfinish = Math.Max(x1, x2);
 
-
-
             for (int x = xstart; x < xfinish; x++)
             {
                 if (y < 0 || x < 0 || x >= graphicsProvider.Width || y >= graphicsProvider.Height)
@@ -126,7 +124,81 @@ namespace MyGL.Service
             }
         }
 
-        public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i  v3, Color color)
+        public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i v3, Color color)
+        {
+            if (v1.Y > v2.Y)
+            {
+                Swap(ref v1, ref v2);
+            }
+
+            if (v1.Y > v3.Y)
+            {
+                Swap(ref v1, ref v3);
+            }
+
+            if (v2.Y > v3.Y)
+            {
+                Swap(ref v2, ref v3);
+            }
+
+            //Now v1 < v2 < v3
+
+            int height = v3.Y - v1.Y;
+            
+            for (int y = v1.Y; y < v2.Y; y++)
+            {
+                int halfHeight = v2.Y - v1.Y + 1;
+                float alpha = (float)(y - v1.Y) / height;
+                float beta = (float)(y - v1.Y) / halfHeight;
+
+                Vec3i A = v1 + (v3 - v1) * alpha;
+                Vec3i B = v1 + (v2 - v1) * beta;
+                DrawStraightLine(A.X, B.X, y, B.Z,zbuffer,color);
+            }
+
+            for (int y = v2.Y; y < v3.Y; y++)
+            {
+                int halfHeight = v3.Y - v2.Y + 1;
+                float alpha = (float)(y - v2.Y) / height;
+                float beta = (float)(y - v2.Y) / halfHeight;
+
+                Vec3i A = v1 + (v3 - v1) * alpha;
+                Vec3i B = v2 + (v3 - v2) * beta;
+                DrawStraightLine(A.X, B.X, y, B.Z, zbuffer, color);
+            }
+        }
+
+        public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i v3, Face face, Textures.Texture texture, float intensity)
+        {
+            if (v1.Y > v2.Y)
+            {
+                Swap(ref v1, ref v2);
+            }
+            if (v1.Y > v3.Y)
+            {
+                Swap(ref v1, ref v3);
+            }
+            if (v2.Y > v3.Y)
+            {
+                Swap(ref v2, ref v3);
+            }
+            int xleft = 0;
+            int xright = 0;
+            for (int i = v1.Y; i < v2.Y; i++)
+            {
+                xleft = Helper3D.InterpolateLinearByX(v1, v2, i);
+                xright = Helper3D.InterpolateLinearByX(v1, v3, i);
+                DrawStraightLine(xleft, xright, i, 0, zbuffer, Color.FromArgb((int)(intensity * 255), Color.White));
+            }
+            for (int i = v2.Y; i < v3.Y; i++)
+            {
+                xleft = Helper3D.InterpolateLinearByX(v2, v3, i);
+                xright = Helper3D.InterpolateLinearByX(v1, v3, i);
+                DrawStraightLine(xleft, xright, i, 0, zbuffer, Color.FromArgb((int)(intensity*255),Color.White));
+            }
+        }
+
+        public void DrawTriangleDeprecated(Vec3i v1, Vec3i v2, Vec3i  v3, Color color)
         {
 
 
@@ -243,7 +315,6 @@ namespace MyGL.Service
             
         }
 
-
         public void DrawObject(Object3D obj, Color color, Vec3f lightDirection, float c = 5)
         {
             var Width = graphicsProvider.Width;
@@ -263,9 +334,9 @@ namespace MyGL.Service
             foreach (var face in obj.Faces)
             {
                 //Работает медленно
-                vertexesFromMem[0] = (obj.Vertexes.ElementAt(face.v1.v - 1));
-                vertexesFromMem[1] = (obj.Vertexes.ElementAt(face.v2.v - 1));
-                vertexesFromMem[2] = (obj.Vertexes.ElementAt(face.v3.v - 1));
+                vertexesFromMem[0] = obj.Vertexes.ElementAt(face.v1.v - 1);
+                vertexesFromMem[1] = obj.Vertexes.ElementAt(face.v2.v - 1);
+                vertexesFromMem[2] = obj.Vertexes.ElementAt(face.v3.v - 1);
                 for (int i = 0;i<vertexes.Length; i++)
                 {
                     Vec3f v = vertexesFromMem[i];
@@ -284,11 +355,7 @@ namespace MyGL.Service
                     intensity = 1.0f;
                 }
                 if (intensity > 0)
-                    DrawTriangle(vertexes[0], vertexes[1], vertexes[2], Color.FromArgb(
-                        (int)(color.R * intensity),
-                        (int)(color.G * intensity),
-                        (int)(color.B * intensity)
-                    ));
+                    DrawTriangle(vertexes[0], vertexes[1], vertexes[2], face, obj.Texture,intensity);
 
             }
         }

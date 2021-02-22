@@ -12,5 +12,10 @@ namespace MyGL.Service.Math3D
         {
             return new Vec3f(elements.ElementAt(0), elements.ElementAt(1), elements.ElementAt(2));
         }
+
+        public static int InterpolateLinearByX(Vec3i v1, Vec3i v2, int y)
+        {
+            return (int)((float)v1.X + ((float)(v2.X - v1.X) / (float)(v2.Y - v1.Y)) * (float)(y - v1.Y));
+        }
     }
 }
