@@ -168,22 +168,31 @@ namespace MyGL.Service
             }
         }
 
-        public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i v3, Face face, Textures.Texture texture, float intensity)
+        public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i v3, Face face, Vec3f[] vt, Textures.Texture texture, float intensity)
         {
+            Vec3f vt1 = vt[face.v1.vt] * texture.data.;
+            Vec3f vt2 = vt[face.v2.vt];
+            Vec3f vt3 = vt[face.v3.vt];
+
             if (v1.Y > v2.Y)
             {
                 Swap(ref v1, ref v2);
+                Swap(ref vt1,ref vt2);
             }
             if (v1.Y > v3.Y)
             {
                 Swap(ref v1, ref v3);
+                Swap(ref vt1, ref vt3);
             }
             if (v2.Y > v3.Y)
             {
                 Swap(ref v2, ref v3);
+                Swap(ref vt2, ref vt3);
             }
             int xleft = 0;
             int xright = 0;
+            
+
             for (int i = v1.Y; i < v2.Y; i++)
             {
                 xleft = Helper3D.InterpolateLinearByX(v1, v2, i);
@@ -196,123 +205,6 @@ namespace MyGL.Service
                 xright = Helper3D.InterpolateLinearByX(v1, v3, i);
                 DrawStraightLine(xleft, xright, i, 0, zbuffer, Color.FromArgb((int)(intensity*255),Color.White));
             }
-        }
-
-        public void DrawTriangleDeprecated(Vec3i v1, Vec3i v2, Vec3i  v3, Color color)
-        {
-
-
-            if (v1.Y > v2.Y)
-            {
-                Swap(ref v1, ref v2);
-            }
-
-            if (v1.Y > v3.Y)
-            {
-                Swap(ref v1, ref v3);
-            }
-
-            if (v2.Y > v3.Y)
-            {
-                Swap(ref v2, ref v3);
-            }
-
-            //Теперь v1 выше всех, v2 посердине, v3 внизу
-
-            //Растеризация верхнего треугольника
-
-            Vec3i vLeft = v2;
-            Vec3i vRight = v3;
-            if (vLeft.X > vRight.X)
-            {
-                Swap(ref vLeft, ref vRight);
-            }
-
-            float errLeft = 0;
-            float errRight = 0;
-            float derrLeft = Math.Abs((float)(v1.X - vLeft.X ) / (v1.Y - vLeft.Y));
-            float derrRight = Math.Abs((float)(v1.X - vRight.X) / (v1.Y - vRight.Y));
-
-            int xLeft = v1.X;
-            int xRight = v1.X;
-
-            int stepRight = 1;
-            int stepLeft = 1;
-
-            if (vLeft.X < v1.X)
-            {
-                stepLeft = -1;
-            }
-            if (vRight.X < v1.X)
-            {
-                stepRight = -1;
-            }
-
-
-            for (int y = v1.Y; y <= v2.Y; y++)
-            {
-                while (errLeft >= 1.0f)
-                {
-                    xLeft += stepLeft;
-                    errLeft -= 1.0f;
-                }
-                while (errRight >= 1.0f)
-                {
-                    xRight += stepRight;
-                    errRight -= 1.0f;
-                }
-                errLeft += derrLeft;
-                errRight += derrRight;
-
-                DrawStraightLine(xLeft-1, xRight+1, y, v1.Z, zbuffer, color);
-
-            }
-
-            //Растризация нижнего треугольника
-
-            vLeft = v1;
-            vRight = v2;
-            if (vLeft.X > vRight.X)
-            {
-                Swap(ref vLeft, ref vRight);
-            }
-
-            stepRight = 1;
-            stepLeft = 1;
-            if (vLeft.X < v3.X)
-            {
-                stepLeft = -1;
-            }
-            if (vRight.X < v3.X)
-            {
-                stepRight = -1;
-            }
-
-            errLeft = 0;
-            errRight = 0;
-            derrLeft = Math.Abs((float)(v3.X - vLeft.X) / (v3.Y - vLeft.Y));
-            derrRight = Math.Abs((float)(v3.X - vRight.X) / (v3.Y - vRight.Y));
-
-            xLeft = v3.X;
-            xRight = v3.X;
-
-            for (int y = v3.Y; y >= v2.Y; y--)
-            {
-                while (errLeft >= 1.0f)
-                {
-                    xLeft += stepLeft;
-                    errLeft -= 1.0f;
-                }
-                while (errRight >= 1.0f)
-                {
-                    xRight += stepRight;
-                    errRight -= 1.0f;
-                }
-                errLeft += derrLeft;
-                errRight += derrRight;
-                DrawStraightLine(xLeft-1, xRight+1, y, v1.Z, zbuffer, color);
-            }
-            
         }
 
         public void DrawObject(Object3D obj, Color color, Vec3f lightDirection, float c = 5)
@@ -355,7 +247,7 @@ namespace MyGL.Service
                     intensity = 1.0f;
                 }
                 if (intensity > 0)
-                    DrawTriangle(vertexes[0], vertexes[1], vertexes[2], face, obj.Texture,intensity);
+                    DrawTriangle(vertexes[0], vertexes[1], vertexes[2], face, obj.VertexesTexture, obj.Texture,intensity);
 
             }
         }

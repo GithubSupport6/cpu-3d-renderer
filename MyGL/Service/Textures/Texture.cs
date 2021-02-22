@@ -9,7 +9,7 @@ namespace MyGL.Service.Textures
 {
     class Texture
     {
-        Bitmap data;
+        public Bitmap data;
 
         public Texture(string path)
         {
