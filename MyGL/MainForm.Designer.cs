@@ -85,6 +85,7 @@
             // 
             this.OpenFileDialog.FileName = "openFileDialog1";
             this.OpenFileDialog.Filter = "Obj files|*.obj";
+            this.OpenFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.OpenFileDialog_FileOk);
             // 
             // MainForm
             // 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MyGL.Service.Math2D;
+using MyGL.Service.Math3D;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,7 +11,7 @@ namespace MyGL.Service.Textures
 {
     class Texture
     {
-        public Bitmap data;
+        private Bitmap data;
 
         public Texture(string path)
         {
@@ -17,6 +19,16 @@ namespace MyGL.Service.Textures
             {
                 data = (Bitmap)bitmap;
             }
+        }
+
+        public Color GetColor(int x, int y)
+        {
+            return data.GetPixel(x, y);
+        }
+
+        public Vec2i GetUV(Vec3f v)
+        {
+            return new Vec2i(new Vec2f(v.X* data.Width, (int)v.Y * data.Height));
         }
     }
 }

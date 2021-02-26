@@ -130,5 +130,10 @@ namespace MyGL
             MainPanel.Refresh();
             Console.WriteLine(z);
         }
+
+        private void OpenFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
     }
 }

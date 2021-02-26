@@ -11,7 +11,7 @@ namespace MyGL.Service.Math2D
     {
         static int DerPow2(int x, int y)
         {
-            return (x - y) * (x-y );
+            return (x-y) * (x-y);
         }
 
         public int X

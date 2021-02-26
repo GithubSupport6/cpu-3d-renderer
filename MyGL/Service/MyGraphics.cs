@@ -168,12 +168,8 @@ namespace MyGL.Service
             }
         }
 
-        public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i v3, Face face, Vec3f[] vt, Textures.Texture texture, float intensity)
+        public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i v3, Vec2i vt1, Vec2i vt2, Vec2i vt3, Textures.Texture texture, float intensity)
         {
-            Vec3f vt1 = vt[face.v1.vt-1];
-            Vec3f vt2 = vt[face.v2.vt-1];
-            Vec3f vt3 = vt[face.v3.vt-1];
-
             if (v1.Y > v2.Y)
             {
                 Swap(ref v1, ref v2);
@@ -191,14 +187,21 @@ namespace MyGL.Service
             }
             Vec3i xleft;
             Vec3i xright;
-            
-
+            Vec2i vleft;
+            Vec2i vright;
+            // Rasterize two subtriangle v1 to v2  and v2 to v3
+            //Upper half of triangle
             for (int i = v1.Y; i < v2.Y; i++)
             {
                 xleft = Helper3D.InterpolateLinearForXZ(v1, v2, i);
                 xright = Helper3D.InterpolateLinearForXZ(v1, v3, i);
-                DrawStraightLine(xleft.X, xright.X, i, xright.Z, zbuffer, Color.FromArgb((int)(intensity * 255), Color.White));
+                vleft = Helper2D.InterpolateLinearForX(vt1,vt2, i);
+                vright = Helper2D.InterpolateLinearForX(vt1, vt3, i);
+                Color color = texture.GetColor(vleft.X, vleft.Y);
+
+                DrawStraightLine(xleft.X, xright.X, i, xright.Z, zbuffer, Color.FromArgb((int)(intensity * 255), color));
             }
+            //Lower half
             for (int i = v2.Y; i < v3.Y; i++)
             {
                 xleft = Helper3D.InterpolateLinearForXZ(v2, v3, i);
@@ -246,16 +249,19 @@ namespace MyGL.Service
                     //Костыль
                     intensity = 1.0f;
                 }
-                if (intensity > 0)
-                    DrawTriangle(vertexes[0], vertexes[1], vertexes[2], face, obj.VertexesTexture, obj.Texture,intensity);
+                Vec2i vt1 = obj.Texture.GetUV(obj.VertexesTexture[face.v1.vt - 1]);
+                Vec2i vt2 = obj.Texture.GetUV(obj.VertexesTexture[face.v2.vt - 1]);
+                Vec2i vt3 = obj.Texture.GetUV(obj.VertexesTexture[face.v3.vt - 1]);
+                
+
+                if (intensity > 0) { }
+                    DrawTriangle(vertexes[0], vertexes[1], vertexes[2], vt1, vt2, vt3, obj.Texture,intensity);
 
             }
         }
 
         public void DrawLight(Vec3f light, int c = 5)
         {
-
-
             graphicsProvider.SetPixel(
                 (int)(light.X * c + graphicsProvider.Width / 2),
                 (int)(light.Y * c + graphicsProvider.Height / 2),
