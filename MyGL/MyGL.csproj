@@ -69,7 +69,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service\Files\TextureParser.cs" />
     <Compile Include="Service\Files\WaveObjParser.cs" />
     <Compile Include="Service\GraphicsProvider\BitmapProvider.cs" />
     <Compile Include="Service\Math2D\Helper2D.cs" />
