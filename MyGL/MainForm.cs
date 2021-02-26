@@ -10,6 +10,7 @@ using System.ComponentModel.Design.Serialization;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -107,7 +108,9 @@ namespace MyGL
         {
             if (OpenFileDialog.ShowDialog() == DialogResult.OK)
             {
-                obj = Parser.Parse(OpenFileDialog.FileName);
+                string path = OpenFileDialog.FileName;
+                string diffuse = Path.Combine(Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path)) + "_diffuse.tga";
+                obj = Parser.Parse(path, diffuse);
             }
         }
 

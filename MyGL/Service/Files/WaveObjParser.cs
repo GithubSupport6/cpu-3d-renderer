@@ -1,4 +1,5 @@
 ﻿using MyGL.Service.Math3D;
+using MyGL.Service.Textures;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,7 +62,7 @@ namespace MyGL.Service.Files
                 return new Vec3f(vertex.ElementAt(0), vertex.ElementAt(1), vertex.ElementAt(2));
         }
 
-        public Object3D Parse(string path)
+        public Object3D Parse(string path, string texturePath = "")
         {
             List<Vec3f> vertexes = new List<Vec3f>();
             List<Face> faces = new List<Face>();
@@ -91,6 +92,13 @@ namespace MyGL.Service.Files
                     }
                 }
             }
+
+            if (texturePath.Count() != 0)
+            {
+                Texture texture = new Texture(texturePath);
+                return new Object3D(vertexes.ToArray(), faces.ToArray(), vTexture.ToArray(), texture);
+            }
+
             return new Object3D(vertexes.ToArray(), faces.ToArray(), vTexture.ToArray());
         }                 
     }

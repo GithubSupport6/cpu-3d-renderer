@@ -43,6 +43,8 @@ namespace MyGL.Service
             this.Faces = faces;
             this.Texture = texture;
             this.VertexesTexture = vertexesTexture;
+            if (texture != null)
+                this.Texture = texture;
         }
 
         public static Vec3i Triangulate(List<int> face)

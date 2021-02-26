@@ -9,6 +9,6 @@ namespace MyGL.Service.Files
 {
     interface IParser
     {
-        Object3D Parse(string path);
+        Object3D Parse(string path, string texturePath);
     }
 }
