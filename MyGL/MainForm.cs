@@ -91,12 +91,6 @@ namespace MyGL
             e.Graphics.DrawImage(image,0,0);
         }
 
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void MainPanel_MouseMove(object sender, MouseEventArgs e)
         {
             x = e.X;
@@ -109,7 +103,7 @@ namespace MyGL
             if (OpenFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string path = OpenFileDialog.FileName;
-                string diffuse = Path.Combine(Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path)) + "_diffuse.tga";
+                string diffuse = Path.Combine(Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path)) + "_diffuse.bmp";
                 obj = Parser.Parse(path, diffuse);
             }
         }
@@ -134,9 +128,5 @@ namespace MyGL
             Console.WriteLine(z);
         }
 
-        private void OpenFileDialog_FileOk(object sender, CancelEventArgs e)
-        {
-
-        }
     }
 }
