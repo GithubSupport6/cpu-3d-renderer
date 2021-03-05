@@ -128,5 +128,9 @@ namespace MyGL
             Console.WriteLine(z);
         }
 
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

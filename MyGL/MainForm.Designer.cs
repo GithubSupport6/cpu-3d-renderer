@@ -98,6 +98,7 @@
             this.MainMenuStrip = this.Menu;
             this.Name = "MainForm";
             this.Text = "My GL demonstration";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.Menu.ResumeLayout(false);
             this.Menu.PerformLayout();

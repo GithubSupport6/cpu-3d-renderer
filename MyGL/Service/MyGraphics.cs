@@ -191,22 +191,26 @@ namespace MyGL.Service
             Vec2i vright;
             // Rasterize two subtriangle v1 to v2  and v2 to v3
             //Upper half of triangle
-            for (int i = v1.Y; i < v2.Y; i++)
+            int iv = vt1.Y;
+            for (int i = v1.Y; i < v2.Y; i++ )
             {
                 xleft = Helper3D.InterpolateLinearForXZ(v1, v2, i);
                 xright = Helper3D.InterpolateLinearForXZ(v1, v3, i);
-                vleft = Helper2D.InterpolateLinearForX(vt1,vt2, i);
-                vright = Helper2D.InterpolateLinearForX(vt1, vt3, i);
-                Color color = texture.GetColor(vleft.X, vleft.Y);
+
+                vleft = Helper2D.InterpolateLinearForX(vt1,vt2, iv);
+                vright = Helper2D.InterpolateLinearForX(vt1, vt3, iv);
+                Color color = texture.GetColor(vt1.X, vt1.Y);
 
                 DrawStraightLine(xleft.X, xright.X, i, xright.Z, zbuffer, Color.FromArgb((int)(intensity * 255), color));
+                iv++;
             }
             //Lower half
             for (int i = v2.Y; i < v3.Y; i++)
             {
                 xleft = Helper3D.InterpolateLinearForXZ(v2, v3, i);
                 xright = Helper3D.InterpolateLinearForXZ(v1, v3, i);
-                DrawStraightLine(xleft.X, xright.X, i, xright.Z, zbuffer, Color.FromArgb((int)(intensity*255),Color.White));
+                Color color = texture.GetColor(vt1.X, vt1.Y);
+                DrawStraightLine(xleft.X, xright.X, i, xright.Z, zbuffer, Color.FromArgb((int)(intensity*255), color));
             }
         }
 
@@ -248,6 +252,11 @@ namespace MyGL.Service
                 {
                     //Костыль
                     intensity = 1.0f;
+                }
+
+                if (intensity < 0)
+                {
+                    intensity = 0;
                 }
                 Vec2i vt1 = obj.Texture.GetUV(obj.VertexesTexture[face.v1.vt - 1]);
                 Vec2i vt2 = obj.Texture.GetUV(obj.VertexesTexture[face.v2.vt - 1]);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyGL.Service.Math3D;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,10 +19,13 @@ namespace MyGL.Service.Math2D
             return y1 + ((y2 - y1) / (x2 - x1)) * (x - x1);
         }
 
+
         public static Vec2i InterpolateLinearForX(Vec2i v1, Vec2i v2, int y)
         {
-            int x = InterpolateLinear(v1.X, v1.Y, v2.X, v2.Y, y);
+            int x = InterpolateLinear(v1.Y, v1.X, v2.Y, v2.X, y);
             return new Vec2i(x, y);
         }
+
+
     }
 }
