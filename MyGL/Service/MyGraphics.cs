@@ -124,50 +124,6 @@ namespace MyGL.Service
             }
         }
 
-        public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i v3, Color color)
-        {
-            if (v1.Y > v2.Y)
-            {
-                Swap(ref v1, ref v2);
-            }
-
-            if (v1.Y > v3.Y)
-            {
-                Swap(ref v1, ref v3);
-            }
-
-            if (v2.Y > v3.Y)
-            {
-                Swap(ref v2, ref v3);
-            }
-
-            //Now v1 < v2 < v3
-
-            int height = v3.Y - v1.Y;
-            
-            for (int y = v1.Y; y < v2.Y; y++)
-            {
-                int halfHeight = v2.Y - v1.Y + 1;
-                float alpha = (float)(y - v1.Y) / height;
-                float beta = (float)(y - v1.Y) / halfHeight;
-
-                Vec3i A = v1 + (v3 - v1) * alpha;
-                Vec3i B = v1 + (v2 - v1) * beta;
-                DrawStraightLine(A.X, B.X, y, B.Z,zbuffer,color);
-            }
-
-            for (int y = v2.Y; y < v3.Y; y++)
-            {
-                int halfHeight = v3.Y - v2.Y + 1;
-                float alpha = (float)(y - v2.Y) / height;
-                float beta = (float)(y - v2.Y) / halfHeight;
-
-                Vec3i A = v1 + (v3 - v1) * alpha;
-                Vec3i B = v2 + (v3 - v2) * beta;
-                DrawStraightLine(A.X, B.X, y, B.Z, zbuffer, color);
-            }
-        }
-
         public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i v3, Vec2i vt1, Vec2i vt2, Vec2i vt3, Textures.Texture texture, float intensity)
         {
             if (v1.Y > v2.Y)
@@ -263,7 +219,7 @@ namespace MyGL.Service
                 Vec2i vt3 = obj.Texture.GetUV(obj.VertexesTexture[face.v3.vt - 1]);
                 
 
-                if (intensity > 0) { }
+                if (intensity > 0)
                     DrawTriangle(vertexes[0], vertexes[1], vertexes[2], vt1, vt2, vt3, obj.Texture,intensity);
 
             }
