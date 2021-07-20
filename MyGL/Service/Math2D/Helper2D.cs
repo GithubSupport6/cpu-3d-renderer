@@ -14,6 +14,12 @@ namespace MyGL.Service.Math2D
             return (int)((float)y1 + ((float)(y2 - y1) / (float)(x2 - x1)) * (float)(x - x1));
         }
 
+        public static int InterpolateLinear(Vec2i x1, int y1, Vec2i x2, int y2, Vec2i x)
+        {
+            //?
+            return (int)((float)y1 + ((float)(y2 - y1) / (x2.X - x1.X)) * (x.X - x1.X));
+        }
+
         public static float InterpolateLinear(float x1, float y1, float x2, float y2, float x)
         {
             return y1 + ((y2 - y1) / (x2 - x1)) * (x - x1);

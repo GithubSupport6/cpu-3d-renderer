@@ -143,22 +143,25 @@ namespace MyGL.Service
             }
             Vec3i xleft;
             Vec3i xright;
-            Vec2i vleft;
-            Vec2i vright;
+            Vec3i xt_left;
+            Vec3i xt_right;
             // Rasterize two subtriangle v1 to v2  and v2 to v3
             //Upper half of triangle
-            int iv = vt1.Y;
+
             for (int i = v1.Y; i < v2.Y; i++ )
             {
+                //Get coords on screen for line
                 xleft = Helper3D.InterpolateLinearForXZ(v1, v2, i);
                 xright = Helper3D.InterpolateLinearForXZ(v1, v3, i);
 
-                vleft = Helper2D.InterpolateLinearForX(vt1,vt2, iv);
-                vright = Helper2D.InterpolateLinearForX(vt1, vt3, iv);
+                //Get point on left side
+                //xt_left = Helper3D.InterpolateLinearForXZ();
+                
+
                 Color color = texture.GetColor(vt1.X, vt1.Y);
 
                 DrawStraightLine(xleft.X, xright.X, i, xright.Z, zbuffer, Color.FromArgb((int)(intensity * 255), color));
-                iv++;
+
             }
             //Lower half
             for (int i = v2.Y; i < v3.Y; i++)
