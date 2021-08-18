@@ -21,6 +21,7 @@ namespace MyGL.Service.Textures
 
         }
 
+
         public Color GetColor(int x, int y)
         {
             return data.GetPixel(x, y);
@@ -29,6 +30,11 @@ namespace MyGL.Service.Textures
         public Vec2i GetUV(Vec3f v)
         {
             return new Vec2i((int)(v.X* data.Width), (int)(v.Y * data.Height));
+        }
+
+        public Vec2i GetUV(float x, float y)
+        {
+            return new Vec2i((int)(x * data.Width), (int)(y * data.Height));
         }
     }
 }

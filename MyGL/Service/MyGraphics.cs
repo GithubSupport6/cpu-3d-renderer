@@ -29,25 +29,21 @@ namespace MyGL.Service
             rhs = temp;
         }
 
-        private void DrawStraightLine(int x1, int x2, int y, int vt1_x, int vt1_y, int vt2_x, int vt2_y, int z, int[,] zbuffer, Texture texture, float intensity)
+        private void DrawStraightLine(int x1, int x2, int y, Vec2f vt1, Vec2f vt2, int z, int[,] zbuffer, Texture texture, float intensity)
         {
 
             int xstart = x1;
             int xfinish = x2;
 
-            int xtstart = vt1_x;
-            int ytstart = vt1_y;
-            int xtfinish = vt2_x;
-            int ytfinish = vt2_y;
+            Vec2f tstart = vt1;
+            Vec2f tfinish = vt2;
 
             if (x1 > x2)
             {
                 xstart = x2;
                 xfinish = x1;
-                xtstart = vt2_x;
-                ytstart = vt2_y;
-                xtfinish = vt1_x;
-                ytfinish = vt1_y;
+                tstart = vt2;
+                tfinish = vt1;
             }
 
             for (int x = xstart; x < xfinish; x++)
@@ -60,9 +56,12 @@ namespace MyGL.Service
                 if (zbuffer[x, y] < z)
                 {
                     zbuffer[x, y] = z;
-                    int xt = Helper2D.InterpolateLinear(xstart,xtstart,xfinish,xtfinish,x);
-                    int yt = Helper2D.InterpolateLinear(xstart, ytstart, xfinish, ytfinish, x);
-                    Color color = texture.GetColor(xt, yt);
+                    float xt = Helper2D.InterpolateLinear(xstart,tstart.X,xfinish,tfinish.X,x);
+                    float yt = Helper2D.InterpolateLinear(xstart, tstart.Y, xfinish, tfinish.Y, x);
+
+                    Vec2i t = texture.GetUV(xt, yt);
+                    yt = texture.
+                    Color color = texture.GetColor(t.X, t.Y);
                     color = Color.FromArgb((int)(color.R * intensity), (int)(color.G * intensity), (int)(color.B * intensity));
                     graphicsProvider.SetPixel(x, y, color);
                 }
@@ -184,7 +183,7 @@ namespace MyGL.Service
             }
         }
 
-        public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i v3, Vec2i vt1, Vec2i vt2, Vec2i vt3, Textures.Texture texture, float intensity)
+        public void DrawTriangle(Vec3i v1, Vec3i v2, Vec3i v3, Vec2f vt1, Vec2f vt2, Vec2f vt3, Textures.Texture texture, float intensity)
         {
             if (v1.Y > v2.Y)
             {
@@ -207,10 +206,10 @@ namespace MyGL.Service
             int zright;
 
             //Coordinates of pixel on texture
-            int xt_left;
-            int xt_right;
-            int yt_left;
-            int yt_right;
+            float xt_left;
+            float xt_right;
+            float yt_left;
+            float yt_right;
 
             // Rasterize two subtriangle v1 to v2  and v2 to v3
             //Upper half of triangle
@@ -234,7 +233,7 @@ namespace MyGL.Service
                 xt_right = Helper2D.InterpolateLinear(v1.Y, vt1.X, v3.Y, vt3.X, i);
                 yt_right = Helper2D.InterpolateLinear(v1.Y, vt1.Y, v3.Y, vt3.Y, i);
 
-                DrawStraightLine(xleft, xright, i, xt_left, yt_left, xt_right, yt_right, zright, zbuffer, texture, intensity);
+                DrawStraightLine(xleft, xright, i, new Vec2f(xt_left,yt_left), new Vec2f(xt_right,yt_right), zright, zbuffer, texture, intensity);
 
             }
             //Lower half
@@ -252,8 +251,9 @@ namespace MyGL.Service
                 //Get texture coord on right side
                 yt_left = Helper2D.InterpolateLinear(v2.Y, vt2.Y, v3.Y, vt3.Y, i);
                 yt_right = Helper2D.InterpolateLinear(v2.Y, vt2.Y, v3.Y, vt3.Y, i);
+                
 
-                DrawStraightLine(xleft, xright, i, xt_left, yt_left, xt_right, yt_right, zright, zbuffer, texture, intensity);
+                DrawStraightLine(xleft, xright, i, new Vec2f(xt_left, yt_left), new Vec2f(xt_right, yt_right), zright, zbuffer, texture, intensity);
             }
         }
 
@@ -366,10 +366,9 @@ namespace MyGL.Service
                     Vec3f v = vertexesFromMem[i];
                     v *= c;
                     //vertexes[i] = new Vec3i(v);
-                    vertexes[i] = new Vec3i(new Vec3f(Width / 2, Height / 2, 0) - new Vec3f(- v.X,v.Y,- v.Z));
+                    vertexes[i] = new Vec3i(new Vec3f(Width / 2, Height / 2, 0) - new Vec3f(- v.X, - v.Y,- v.Z));
                 }
 
-                //color = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
 
                 Vec3f normal = Vec3f.VecMul(vertexesFromMem[2] - vertexesFromMem[0], vertexesFromMem[1] - vertexesFromMem[0]);
                 normal.Normalize();
@@ -384,9 +383,9 @@ namespace MyGL.Service
                 {
                     intensity = 0;
                 }
-                Vec2i vt1 = obj.Texture.GetUV(obj.VertexesTexture[face.v1.vt - 1]);
-                Vec2i vt2 = obj.Texture.GetUV(obj.VertexesTexture[face.v2.vt - 1]);
-                Vec2i vt3 = obj.Texture.GetUV(obj.VertexesTexture[face.v3.vt - 1]);
+                Vec2f vt1 = new Vec2f(obj.VertexesTexture[face.v1.vt - 1]);
+                Vec2f vt2 = new Vec2f(obj.VertexesTexture[face.v2.vt - 1]);
+                Vec2f vt3 = new Vec2f(obj.VertexesTexture[face.v3.vt - 1]);
                 
 
                 if (intensity > 0)

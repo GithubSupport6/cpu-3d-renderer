@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyGL.Service.Math3D;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,12 @@ namespace MyGL.Service.Math2D
         {
             this.X = x;
             this.Y = y;
+        }
+
+        public Vec2f(Vec3f v)
+        {
+            this.X = v.X;
+            this.Y = v.Y;
         }
 
         public static Vec2f operator *(Vec2f v, int c)
