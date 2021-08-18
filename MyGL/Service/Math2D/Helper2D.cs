@@ -11,7 +11,7 @@ namespace MyGL.Service.Math2D
     {
         public static int InterpolateLinear(int x1, int y1, int x2, int y2, int x)
         {
-            return (int)((float)y1 + ((float)(y2 - y1) / (float)(x2 - x1)) * (float)(x - x1));
+            return (int)((float)y1 + ((float)(y2 - y1) / (float)(x2 - x1)) * (x - x1));
         }
 
         public static int InterpolateLinear(Vec2i x1, int y1, Vec2i x2, int y2, Vec2i x)

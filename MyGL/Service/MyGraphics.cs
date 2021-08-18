@@ -1,5 +1,6 @@
 ﻿using MyGL.Service.Math2D;
 using MyGL.Service.Math3D;
+using MyGL.Service.Textures;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -28,10 +29,26 @@ namespace MyGL.Service
             rhs = temp;
         }
 
-        private void DrawStraightLine(int x1, int x2, int y, int z, int[,] zbuffer, Color color)
+        private void DrawStraightLine(int x1, int x2, int y, int vt1_x, int vt1_y, int vt2_x, int vt2_y, int z, int[,] zbuffer, Texture texture, float intensity)
         {
-            int xstart = Math.Min(x1, x2);
-            int xfinish = Math.Max(x1, x2);
+
+            int xstart = x1;
+            int xfinish = x2;
+
+            int xtstart = vt1_x;
+            int ytstart = vt1_y;
+            int xtfinish = vt2_x;
+            int ytfinish = vt2_y;
+
+            if (x1 > x2)
+            {
+                xstart = x2;
+                xfinish = x1;
+                xtstart = vt2_x;
+                ytstart = vt2_y;
+                xtfinish = vt1_x;
+                ytfinish = vt1_y;
+            }
 
             for (int x = xstart; x < xfinish; x++)
             {
@@ -43,8 +60,51 @@ namespace MyGL.Service
                 if (zbuffer[x, y] < z)
                 {
                     zbuffer[x, y] = z;
+                    int xt = Helper2D.InterpolateLinear(xstart,xtstart,xfinish,xtfinish,x);
+                    int yt = Helper2D.InterpolateLinear(xstart, ytstart, xfinish, ytfinish, x);
+                    Color color = texture.GetColor(xt, yt);
+                    color = Color.FromArgb((int)(color.R * intensity), (int)(color.G * intensity), (int)(color.B * intensity));
                     graphicsProvider.SetPixel(x, y, color);
                 }
+            }
+
+        }
+
+        private void DrawStraightLineGradient(int x1, int x2, int y, Color c1, Color c2)
+        {
+
+            int xstart = x1;
+            int xfinish = x2;
+
+            Color xtstart = c1;
+
+            Color xtfinish = c2;
+
+
+            if (x1 > x2)
+            {
+                xstart = x2;
+                xfinish = x1;
+                xtstart = c2;
+                xtfinish = c1;
+            }
+
+            for (int x = xstart; x < xfinish; x++)
+            {
+                if (y < 0 || x < 0 || x >= graphicsProvider.Width || y >= graphicsProvider.Height)
+                {
+                    continue;
+                }
+
+
+                float r = Helper2D.InterpolateLinear(xstart, xtstart.R, xfinish, xtfinish.R, x);
+                float g = Helper2D.InterpolateLinear(xstart, xtstart.G, xfinish, xtfinish.G, x);
+                float b = Helper2D.InterpolateLinear(xstart, xtstart.B, xfinish, xtfinish.B, x);
+
+                Color color = Color.Green;
+                color = Color.FromArgb((int)r, (int)g, (int)b);
+                graphicsProvider.SetPixel(x, y, color);
+                
             }
 
         }
@@ -141,37 +201,143 @@ namespace MyGL.Service
                 Swap(ref v2, ref v3);
                 Swap(ref vt2, ref vt3);
             }
-            Vec3i xleft;
-            Vec3i xright;
-            Vec3i xt_left;
-            Vec3i xt_right;
+            int xleft;
+            int zleft;
+            int xright;
+            int zright;
+
+            //Coordinates of pixel on texture
+            int xt_left;
+            int xt_right;
+            int yt_left;
+            int yt_right;
+
             // Rasterize two subtriangle v1 to v2  and v2 to v3
             //Upper half of triangle
 
             for (int i = v1.Y; i < v2.Y; i++ )
             {
                 //Get coords on screen for line
-                xleft = Helper3D.InterpolateLinearForXZ(v1, v2, i);
-                xright = Helper3D.InterpolateLinearForXZ(v1, v3, i);
+                xleft = Helper2D.InterpolateLinear(v1.Y, v1.X, v2.Y, v2.X, i);
+                zleft = Helper2D.InterpolateLinear(v1.Y, v1.Z, v2.Y, v2.Z, i);
 
-                //Get point on left side
-                //xt_left = Helper3D.InterpolateLinearForXZ();
+                xright = Helper2D.InterpolateLinear(v1.Y, v1.X, v3.Y, v3.X, i);
+                zright = Helper2D.InterpolateLinear(v1.Y, v1.Z, v3.Y, v3.Z, i);
                 
 
-                Color color = texture.GetColor(vt1.X, vt1.Y);
+                //Get texture coord on left side
+                xt_left = Helper2D.InterpolateLinear(v1.Y, vt1.X, v2.Y, vt2.X, i);
+                yt_left = Helper2D.InterpolateLinear(v1.Y, vt1.Y, v2.Y, vt2.Y, i);
 
-                DrawStraightLine(xleft.X, xright.X, i, xright.Z, zbuffer, Color.FromArgb((int)(intensity * 255), color));
+
+                //Get texture coord on right side
+                xt_right = Helper2D.InterpolateLinear(v1.Y, vt1.X, v3.Y, vt3.X, i);
+                yt_right = Helper2D.InterpolateLinear(v1.Y, vt1.Y, v3.Y, vt3.Y, i);
+
+                DrawStraightLine(xleft, xright, i, xt_left, yt_left, xt_right, yt_right, zright, zbuffer, texture, intensity);
 
             }
             //Lower half
             for (int i = v2.Y; i < v3.Y; i++)
             {
-                xleft = Helper3D.InterpolateLinearForXZ(v2, v3, i);
-                xright = Helper3D.InterpolateLinearForXZ(v1, v3, i);
-                Color color = texture.GetColor(vt1.X, vt1.Y);
-                DrawStraightLine(xleft.X, xright.X, i, xright.Z, zbuffer, Color.FromArgb((int)(intensity*255), color));
+                xleft = Helper2D.InterpolateLinear(v1.Y, v1.X, v3.Y, v3.X, i);
+                zleft = Helper2D.InterpolateLinear(v1.Y, v1.Z, v3.Y, v3.Z, i);
+
+                xright = Helper2D.InterpolateLinear(v2.Y, v2.X, v3.Y, v3.X, i);
+                zright = Helper2D.InterpolateLinear(v2.Y, v2.Z, v3.Y, v3.Z, i);
+
+
+                xt_left = Helper2D.InterpolateLinear(v1.Y, vt1.X, v3.Y, vt3.X, i);
+                xt_right = Helper2D.InterpolateLinear(v1.Y, vt1.X, v3.Y, vt3.X, i);
+                //Get texture coord on right side
+                yt_left = Helper2D.InterpolateLinear(v2.Y, vt2.Y, v3.Y, vt3.Y, i);
+                yt_right = Helper2D.InterpolateLinear(v2.Y, vt2.Y, v3.Y, vt3.Y, i);
+
+                DrawStraightLine(xleft, xright, i, xt_left, yt_left, xt_right, yt_right, zright, zbuffer, texture, intensity);
             }
         }
+
+        public void DrawGradientTrianlge(Vec2i v1, Vec2i v2, Vec2i v3, Color vc1, Color vc2, Color vc3)
+        {
+            Color color1 = vc1;
+            Color color2 = vc2;
+            Color color3 = vc3;
+
+
+            if (v1.Y > v2.Y)
+            {
+                Swap(ref v1, ref v2);
+                Swap(ref color1, ref color2);
+            }
+            if (v1.Y > v3.Y)
+            {
+                Swap(ref v1, ref v3);
+                Swap(ref color1, ref color3);
+            }
+            if (v2.Y > v3.Y)
+            {
+                Swap(ref v2, ref v3);
+                Swap(ref color2, ref color3);
+            }
+
+            int xleft;
+            int xright;
+
+
+            //Coordinates of pixel on texture
+            int rleft;
+            int gleft;
+            int bleft;
+
+            int rright;
+            int gright;
+            int bright;
+
+            // Rasterize two subtriangle v1 to v2  and v2 to v3
+            //Upper half of triangle
+
+            for (int i = v1.Y; i < v2.Y; i++)
+            {
+                //Get coords on screen for line
+                xleft = Helper2D.InterpolateLinear(v1.Y, v1.X, v2.Y, v2.X, i);
+
+                xright = Helper2D.InterpolateLinear(v1.Y, v1.X, v3.Y, v3.X, i);
+
+
+                //Get texture coord on left side
+                rleft = Helper2D.InterpolateLinear(v1.Y, color1.R, v2.Y, color2.R, i);
+                gleft = Helper2D.InterpolateLinear(v1.Y, color1.G, v2.Y, color2.G, i);
+                bleft = Helper2D.InterpolateLinear(v1.Y, color1.B, v2.Y, color2.B, i);
+
+                //Get texture coord on right side
+                rright = Helper2D.InterpolateLinear(v1.Y, color1.R, v3.Y, color3.R, i);
+                gright = Helper2D.InterpolateLinear(v1.Y, color1.G, v3.Y, color3.G, i);
+                bright = Helper2D.InterpolateLinear(v1.Y, color1.B, v3.Y, color3.B, i);
+
+                DrawStraightLineGradient(xleft, xright, i, Color.FromArgb(rleft,gleft,bleft), Color.FromArgb(rright,gright,bright));
+
+            }
+            //Lower half
+            for (int i = v2.Y; i < v3.Y; i++)
+            {
+                xleft = Helper2D.InterpolateLinear(v1.Y, v1.X, v3.Y, v3.X, i);
+
+                xright = Helper2D.InterpolateLinear(v2.Y, v2.X, v3.Y, v3.X, i);
+
+
+                rleft = Helper2D.InterpolateLinear(v1.Y, color1.R, v3.Y, color3.R, i);
+                gleft = Helper2D.InterpolateLinear(v1.Y, color1.G, v3.Y, color3.G, i);
+                bleft = Helper2D.InterpolateLinear(v1.Y, color1.B, v3.Y, color3.B, i);
+
+                //Get texture coord on right side
+                rright = Helper2D.InterpolateLinear(v2.Y, color2.R, v3.Y, color3.R, i);
+                gright = Helper2D.InterpolateLinear(v2.Y, color2.G, v3.Y, color3.G, i);
+                bright = Helper2D.InterpolateLinear(v2.Y, color2.B, v3.Y, color3.B, i);
+
+                DrawStraightLineGradient(xleft, xright, i, Color.FromArgb(rleft, gleft, bleft), Color.FromArgb(rright, gright, bright));
+            }
+        }
+
 
         public void DrawObject(Object3D obj, Color color, Vec3f lightDirection, float c = 5)
         {
@@ -199,6 +365,7 @@ namespace MyGL.Service
                 {
                     Vec3f v = vertexesFromMem[i];
                     v *= c;
+                    //vertexes[i] = new Vec3i(v);
                     vertexes[i] = new Vec3i(new Vec3f(Width / 2, Height / 2, 0) - new Vec3f(- v.X,v.Y,- v.Z));
                 }
 

@@ -28,7 +28,7 @@ namespace MyGL.Service.Textures
 
         public Vec2i GetUV(Vec3f v)
         {
-            return new Vec2i(new Vec2f(v.X* data.Width, v.Y * data.Height));
+            return new Vec2i((int)(v.X* data.Width), (int)(v.Y * data.Height));
         }
     }
 }

@@ -58,8 +58,10 @@ namespace MyGL.Service.Files
             {
                 return Helper3D.Triangulate(vertex.Skip(1).ToList());
             }
-            else
+            else if (vertex.Count() == 3)
                 return new Vec3f(vertex.ElementAt(0), vertex.ElementAt(1), vertex.ElementAt(2));
+            else
+                return new Vec3f(vertex.ElementAt(0), vertex.ElementAt(1), 0);
         }
 
         public Object3D Parse(string path, string texturePath = "")
