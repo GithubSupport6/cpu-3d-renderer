@@ -29,7 +29,7 @@ namespace MyGL.Service
             rhs = temp;
         }
 
-        private void DrawStraightLine(int x1, int x2, int y, Vec2f vt1, Vec2f vt2, int z, int[,] zbuffer, Texture texture, float intensity)
+        private void DrawStraightLine(int x1, int x2, int y, Vec2f vt1, Vec2f vt2, int zleft, int zright, int[,] zbuffer, Texture texture, float intensity)
         {
 
             int xstart = x1;
@@ -52,6 +52,8 @@ namespace MyGL.Service
                 {
                     continue;
                 }
+
+                int z = Helper2D.InterpolateLinear(xstart, zleft, xfinish, zright, x);
 
                 if (zbuffer[x, y] < z)
                 {
