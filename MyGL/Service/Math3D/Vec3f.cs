@@ -37,9 +37,9 @@ namespace MyGL.Service.Math3D
         public void Normalize()
         {
             float length = this.Length();
-            X = X / Length();
-            Y = Y / Length();
-            Z = Z / Length();
+            X = X / length;
+            Y = Y / length;
+            Z = Z / length;
         }
 
         public static Vec3f operator *(Vec3f v, float c)
