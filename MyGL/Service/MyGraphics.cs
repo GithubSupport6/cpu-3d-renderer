@@ -358,7 +358,8 @@ namespace MyGL.Service
                     zbuffer[i, j] = Int32.MinValue;
                 }
             }
-
+            Vec3f v;
+            Vec3f normal;
 
             foreach (var face in obj.Faces)
             {
@@ -368,7 +369,7 @@ namespace MyGL.Service
                 vertexesFromMem[2] = obj.Vertexes.ElementAt(face.v3.v - 1);
                 for (int i = 0;i<vertexes.Length; i++)
                 {
-                    Vec3f v = vertexesFromMem[i];
+                    v = vertexesFromMem[i];
                     v *= c;
                     //vertexes[i] = new Vec3i(v);
                     //TODO Костыль потому что перевернутый
@@ -376,7 +377,7 @@ namespace MyGL.Service
                 }
 
 
-                Vec3f normal = Vec3f.VecMul(vertexesFromMem[2] - vertexesFromMem[0], vertexesFromMem[1] - vertexesFromMem[0]);
+                normal = Vec3f.VecMul(vertexesFromMem[2] - vertexesFromMem[0], vertexesFromMem[1] - vertexesFromMem[0]);
                 normal.Normalize();
                 float intensity = normal * lightDirection;
                 if (intensity > 1.0f)

@@ -90,14 +90,14 @@ namespace MyGL
             Vec3f ligth = new Vec3f(
                 0,
                 0,
-                -1);
+                z);
 
             //ligth.Normalize();
 
             //graphics.DrawLine(new Vec2i(200, 200), new Vec2i(x, y), Color.White);
             graphics.DrawObject(obj,Color.White,ligth, c);
 
-            graphics.DrawGradientTrianlge(new Vec2i(10, 10), new Vec2i(250, 50), new Vec2i(300, 450), Color.Red, Color.Blue, Color.Green);
+            //graphics.DrawGradientTrianlge(new Vec2i(10, 10), new Vec2i(250, 50), new Vec2i(300, 450), Color.Red, Color.Blue, Color.Green);
 
             graphics.DrawLight(ligth, Width / 2);
             e.Graphics.DrawImage(image,0,0);
