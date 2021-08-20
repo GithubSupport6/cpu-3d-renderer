@@ -60,7 +60,9 @@ namespace MyGL.Service
                     float yt = Helper2D.InterpolateLinear(xstart, tstart.Y, xfinish, tfinish.Y, x);
 
                     Vec2i t = texture.GetUV(xt, yt);
-                    yt = texture.
+                    
+                    //TODO: Костыль 2 потому что перевернутый
+                    t = new Vec2i(t.X, texture.GetHeight() - t.Y);
                     Color color = texture.GetColor(t.X, t.Y);
                     color = Color.FromArgb((int)(color.R * intensity), (int)(color.G * intensity), (int)(color.B * intensity));
                     graphicsProvider.SetPixel(x, y, color);
@@ -366,7 +368,8 @@ namespace MyGL.Service
                     Vec3f v = vertexesFromMem[i];
                     v *= c;
                     //vertexes[i] = new Vec3i(v);
-                    vertexes[i] = new Vec3i(new Vec3f(Width / 2, Height / 2, 0) - new Vec3f(- v.X, - v.Y,- v.Z));
+                    //TODO Костыль потому что перевернутый
+                    vertexes[i] = new Vec3i(new Vec3f(Width / 2, Height / 2, 0) - new Vec3f(- v.X, v.Y,-v.Z));
                 }
 
 

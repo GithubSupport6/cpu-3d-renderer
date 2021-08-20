@@ -21,6 +21,10 @@ namespace MyGL.Service.Textures
 
         }
 
+        public int GetHeight()
+        {
+            return data.Height;
+        }
 
         public Color GetColor(int x, int y)
         {
