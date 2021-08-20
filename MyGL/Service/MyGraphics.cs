@@ -45,6 +45,7 @@ namespace MyGL.Service
                 tstart = vt2;
                 tfinish = vt1;
             }
+            Color color;
 
             for (int x = xstart; x < xfinish; x++)
             {
@@ -65,7 +66,7 @@ namespace MyGL.Service
                     
                     //TODO: Костыль 2 потому что перевернутый
                     t = new Vec2i(t.X, texture.GetHeight() - t.Y);
-                    Color color = texture.GetColor(t.X, t.Y);
+                    color = texture.GetColor(t.X, t.Y);
                     color = Color.FromArgb((int)(color.R * intensity), (int)(color.G * intensity), (int)(color.B * intensity));
                     graphicsProvider.SetPixel(x, y, color);
                 }

@@ -44,6 +44,7 @@ namespace MyGL
             );
             MainPanel.MouseWheel += MainPanel_MouseWheel;
             KeyPreview = true;
+            
         }
 
         private void MainPanel_MouseWheel(object sender, MouseEventArgs e)
@@ -63,9 +64,19 @@ namespace MyGL
                 return;
             }
 
-            e.Graphics.Clear(Color.Black);
+            if (image == null)
+            {
+                image = new Bitmap(e.ClipRectangle.Width, e.ClipRectangle.Height);
+            }
 
-            image = new Bitmap(e.ClipRectangle.Width, e.ClipRectangle.Height);
+            e.Graphics.Clear(Color.Black);
+            for (int i = 0; i < e.ClipRectangle.Width; i++)
+            {
+                for (int j = 0; j< e.ClipRectangle.Height; j++)
+                {
+                    image.SetPixel(i, j, Color.Black);
+                }
+            }
 
             provider = new BitmapProvider(image);
             graphics = new MyGraphics(provider);
