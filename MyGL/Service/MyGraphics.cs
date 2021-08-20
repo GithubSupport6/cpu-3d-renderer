@@ -237,7 +237,7 @@ namespace MyGL.Service
                 xt_right = Helper2D.InterpolateLinear(v1.Y, vt1.X, v3.Y, vt3.X, i);
                 yt_right = Helper2D.InterpolateLinear(v1.Y, vt1.Y, v3.Y, vt3.Y, i);
 
-                DrawStraightLine(xleft, xright, i, new Vec2f(xt_left,yt_left), new Vec2f(xt_right,yt_right), zright, zbuffer, texture, intensity);
+                DrawStraightLine(xleft, xright, i, new Vec2f(xt_left,yt_left), new Vec2f(xt_right,yt_right), zleft, zright, zbuffer, texture, intensity);
 
             }
             //Lower half
@@ -257,7 +257,7 @@ namespace MyGL.Service
                 yt_right = Helper2D.InterpolateLinear(v2.Y, vt2.Y, v3.Y, vt3.Y, i);
                 
 
-                DrawStraightLine(xleft, xright, i, new Vec2f(xt_left, yt_left), new Vec2f(xt_right, yt_right), zright, zbuffer, texture, intensity);
+                DrawStraightLine(xleft, xright, i, new Vec2f(xt_left, yt_left), new Vec2f(xt_right, yt_right), zleft, zright, zbuffer, texture, intensity);
             }
         }
 
