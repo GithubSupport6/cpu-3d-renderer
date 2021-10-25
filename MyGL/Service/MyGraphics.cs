@@ -1,5 +1,6 @@
 ﻿using MyGL.Service.Math2D;
 using MyGL.Service.Math3D;
+using MyGL.Service.Math4D;
 using MyGL.Service.Textures;
 using System;
 using System.Collections.Generic;
@@ -343,13 +344,20 @@ namespace MyGL.Service
             }
         }
 
+        public void DrawNormal(Vec3i point, Vec3f normal, Color color, float c)
+        {
+            Vec2i p = new Vec2i(point.X, point.Y);
+            Vec2i n = new Vec2i((int)(normal.X * c), (int)(normal.Y * c));
+            DrawLine(p, p+n, color);
+        }
 
         public void DrawObject(Object3D obj, Color color, Vec3f lightDirection, float c = 5)
         {
             var Width = graphicsProvider.Width;
             var Height = graphicsProvider.Height;
             var vertexesFromMem = new Vec3f[3];
-            var vertexes = new Vec3i[3];
+            var vertexes = new Vec3f[3];
+            float projectionCoeff = 5;
 
             for (int i = 0; i < graphicsProvider.Width; i++)
             {
@@ -361,19 +369,26 @@ namespace MyGL.Service
             Vec3f v;
             Vec3f normal;
 
+            Vec2f vt1;
+            Vec2f vt2;
+            Vec2f vt3;
+            Matrix4f Projection = Matrix4f.GetProjectionMatrix(projectionCoeff);
+
             foreach (var face in obj.Faces)
             {
                 //Работает медленно
                 vertexesFromMem[0] = obj.Vertexes.ElementAt(face.v1.v - 1);
                 vertexesFromMem[1] = obj.Vertexes.ElementAt(face.v2.v - 1);
                 vertexesFromMem[2] = obj.Vertexes.ElementAt(face.v3.v - 1);
+
                 for (int i = 0;i<vertexes.Length; i++)
                 {
                     v = vertexesFromMem[i];
+                    v = Vec4f.Mult(new Vec4f(v, 1), Projection).Project();
                     v *= c;
                     //vertexes[i] = new Vec3i(v);
                     //TODO Костыль потому что перевернутый
-                    vertexes[i] = new Vec3i(new Vec3f(Width / 2, Height / 2, 0) - new Vec3f(- v.X, v.Y,-v.Z));
+                    vertexes[i] = new Vec3f(Width / 2, Height / 2, 0) - new Vec3f(- v.X, v.Y,-v.Z);
                 }
 
 
@@ -386,17 +401,18 @@ namespace MyGL.Service
                     intensity = 1.0f;
                 }
 
-                if (intensity < 0)
-                {
-                    intensity = 0;
-                }
-                Vec2f vt1 = new Vec2f(obj.VertexesTexture[face.v1.vt - 1]);
-                Vec2f vt2 = new Vec2f(obj.VertexesTexture[face.v2.vt - 1]);
-                Vec2f vt3 = new Vec2f(obj.VertexesTexture[face.v3.vt - 1]);
+
+                vt1 = new Vec2f(obj.VertexesTexture[face.v1.vt - 1]);
+                vt2 = new Vec2f(obj.VertexesTexture[face.v2.vt - 1]);
+                vt3 = new Vec2f(obj.VertexesTexture[face.v3.vt - 1]);
+
+                //проекция
                 
 
                 if (intensity > 0)
-                    DrawTriangle(vertexes[0], vertexes[1], vertexes[2], vt1, vt2, vt3, obj.Texture,intensity);
+                {
+                    DrawTriangle(new Vec3i(vertexes[0]), new Vec3i(vertexes[1]), new Vec3i(vertexes[2]), vt1, vt2, vt3, obj.Texture, intensity);
+                }
 
             }
         }

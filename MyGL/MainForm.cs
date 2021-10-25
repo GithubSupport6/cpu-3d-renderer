@@ -92,7 +92,7 @@ namespace MyGL
                 0,
                 z);
 
-            //ligth.Normalize();
+            ligth.Normalize();
 
             //graphics.DrawLine(new Vec2i(200, 200), new Vec2i(x, y), Color.White);
             graphics.DrawObject(obj,Color.White,ligth, c);

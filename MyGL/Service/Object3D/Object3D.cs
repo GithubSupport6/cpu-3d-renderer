@@ -47,6 +47,7 @@ namespace MyGL.Service
                 this.Texture = texture;
         }
 
+
         public static Vec3i Triangulate(List<int> face)
         {
             throw new NotImplementedException();

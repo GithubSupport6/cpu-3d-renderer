@@ -76,8 +76,10 @@
     <Compile Include="Service\Math2D\Vec2f.cs" />
     <Compile Include="Service\Math2D\Vec2i.cs" />
     <Compile Include="Service\Math3D\Helper3D.cs" />
+    <Compile Include="Service\Math4D\Matrix4f.cs" />
     <Compile Include="Service\Math3D\Vec3f.cs" />
     <Compile Include="Service\Math3D\Vec3i.cs" />
+    <Compile Include="Service\Math4D\Vec4f.cs" />
     <Compile Include="Service\Object3D\Face.cs" />
     <Compile Include="Service\Object3D\LightSource.cs" />
     <Compile Include="Service\Object3D\Object3D.cs" />
